@@ -15,6 +15,7 @@ main =
             ( Canvas.initialize (Size 640 360)
                 |> Canvas.batch drawWalls
             , Nothing
+            , Point.fromInts (0, 0)
             )
         , view = view
         , update = update
@@ -71,33 +72,45 @@ type Msg
 
 
 type alias Model =
-    ( Canvas, ClickState )
+    ( Canvas, ClickState, Point )
 
 
 update : Msg -> Model -> Model
-update message ( canvas, clickState ) =
+update message ( canvas, clickState, mousePos ) =
+  let mouseDot = 
+      [ BeginPath
+      , FillStyle Color.red 
+      , Arc mousePos 4 0 ( 2 * 3.1415 )
+      , Fill
+      ]
+      clear = 
+        [ ClearRect (Point.fromInts (0, 0)) { width = 640, height =  360 } ]
+
+      canvas_ = canvas
+          |> Canvas.batch (List.concat [clear, mouseDot, drawWalls])
+  in 
     case message of
         Click position ->
             case clickState of
                 Nothing ->
-                    ( canvas, FirstClick position )
+                    ( canvas_, FirstClick position, mousePos )
 
                 FirstClick p1 ->
-                    ( canvas, clickState )
+                    ( canvas_, clickState, mousePos )
 
                 Moving p0 p1 ->
-                    ( drawLine p0 p1 canvas, Nothing )
+                    ( drawLine p0 p1 canvas_, Nothing, mousePos )
 
         Move position ->
             case clickState of
                 Nothing ->
-                    ( canvas, Nothing )
+                    ( canvas_, Nothing, position)
 
                 FirstClick p0 ->
-                    ( canvas, Moving p0 position )
+                    ( canvas_, Moving p0 position, position )
 
                 Moving p0 _ ->
-                    ( canvas, Moving p0 position )
+                    ( canvas_, Moving p0 position, position)
 
 
 view : Model -> Html Msg
@@ -112,7 +125,7 @@ view model =
 
 
 handleClickState : Model -> Canvas
-handleClickState ( canvas, clickState ) =
+handleClickState ( canvas, clickState, mousePos ) =
     case clickState of
         Nothing ->
             canvas
