@@ -45,10 +45,10 @@ findClosestIntersection : Float -> Px -> Intersection
 findClosestIntersection angle mousePos =
     let
         dx =
-            cos (angle)
+            cos angle
 
         dy =
-            sin (angle)
+            sin angle
 
         ray =
             createRay mousePos.x mousePos.y (mousePos.x + dx) (mousePos.y + dy)
@@ -181,9 +181,23 @@ drawWalls =
 
 drawRays : Px -> List Intersection -> List DrawOp
 drawRays mousePos rays =
-    --  let _ = Debug.log "rays" rays
-    --  in
-    List.concatMap (\a -> line (Point.fromFloats ( mousePos.x, mousePos.y )) (Point.fromFloats ( a.x, a.y ))) rays
+    let intersections = List.map (\segment ->
+              getIntersection (createRay 300 180 mousePos.x mousePos.y) segment) segments
+            |> List.filterMap identity
+            |> Debug.log "intersections"
+
+        drawDot {x, y} =
+            [ BeginPath
+            , FillStyle Color.blue
+            , Arc (Point.fromFloats (x,y)) 2 0 (2 * pi)
+            , Fill
+            ]
+        dots = List.concatMap drawDot intersections
+        lineFromCenterToMouse = 
+          List.concatMap (\a -> line (Point.fromFloats ( 300, 180 )) (Point.fromFloats ( a.x, a.y ))) [mousePos]
+    in
+    --List.concatMap (\a -> line (Point.fromFloats ( 300, 180 )) (Point.fromFloats ( a.x, a.y ))) rays
+      List.concat [dots, lineFromCenterToMouse ]
 
 
 type ClickState
