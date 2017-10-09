@@ -178,6 +178,13 @@ drawWalls : List DrawOp
 drawWalls =
     List.concatMap (\{ a, b } -> line (Point.fromFloats ( a.x, a.y )) (Point.fromFloats ( b.x, b.y ))) segments
 
+drawDot : Intersection -> List DrawOp
+drawDot { x, y } =
+  [ BeginPath
+  , FillStyle Color.blue
+  , Arc (Point.fromFloats ( x, y )) 2 0 (2 * pi)
+  , Fill
+  ]
 
 drawRays : Px -> List Intersection -> List DrawOp
 drawRays mousePos rays =
@@ -191,12 +198,6 @@ drawRays mousePos rays =
                 |> List.filterMap identity
                 |> Debug.log "intersections"
 
-        drawDot { x, y } =
-            [ BeginPath
-            , FillStyle Color.blue
-            , Arc (Point.fromFloats ( x, y )) 2 0 (2 * pi)
-            , Fill
-            ]
 
         dots =
             List.concatMap drawDot intersections
