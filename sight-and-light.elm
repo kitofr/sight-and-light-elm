@@ -65,7 +65,7 @@ findClosestIntersection angle mousePos =
                     Nothing ->
                         closest
             )
-            { x = 0, y = 0, param = 0 }
+            { x = 600, y = 380, param = 600 }
             segments
 
 
@@ -172,6 +172,11 @@ drawWalls : List DrawOp
 drawWalls =
     List.concatMap (\{ a, b } -> line (Point.fromFloats ( a.x, a.y )) (Point.fromFloats ( b.x, b.y ))) segments
 
+drawRays : Px -> List Intersection -> List DrawOp
+drawRays mousePos rays = 
+    List.concatMap (\a -> line (Point.fromFloats ( mousePos.x, mousePos.y )) (Point.fromFloats ( a.x, a.y ))) rays
+
+
 
 type ClickState
     = NoClick
@@ -201,9 +206,17 @@ update message ( canvas, clickState, mousePos ) =
         clear =
             [ ClearRect (Point.fromInts ( 0, 0 )) { width = 640, height = 360 } ]
 
+        toPx : Point -> Px
+        toPx p  =
+          let (x,y) = Point.toFloats p
+          in
+            (Px x y)
+
+        rays = castRays (toPx mousePos)
+
         canvas_ =
             canvas
-                |> Canvas.batch (List.concat [ clear, mouseDot, drawWalls ])
+                |> Canvas.batch (List.concat [ clear, mouseDot, drawWalls, drawRays (toPx mousePos) rays ])
     in
         case message of
             Click position ->
