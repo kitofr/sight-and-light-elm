@@ -65,15 +65,21 @@ findClosestIntersection angle mousePos =
                     Nothing ->
                         closest
             )
-            { x = 600, y = 380, param = 600 }
+            { x = 0, y = 0, param = 600 }
             segments
 
 
 castRays : Px -> List Intersection
 castRays mousePos =
     let
+        steps =
+            50
+
+        stepAdjustment =
+            pi * 2 / steps
+
         fullCircle =
-            List.map (\x -> (toFloat x) + (3.1415 * 2) / 50) (List.range 0 50)
+            List.scanl (\_ b -> b + stepAdjustment) 0 (List.map toFloat (List.range 0 steps))
     in
         List.map (\angle -> findClosestIntersection angle mousePos) fullCircle
 
@@ -172,10 +178,12 @@ drawWalls : List DrawOp
 drawWalls =
     List.concatMap (\{ a, b } -> line (Point.fromFloats ( a.x, a.y )) (Point.fromFloats ( b.x, b.y ))) segments
 
-drawRays : Px -> List Intersection -> List DrawOp
-drawRays mousePos rays = 
-    List.concatMap (\a -> line (Point.fromFloats ( mousePos.x, mousePos.y )) (Point.fromFloats ( a.x, a.y ))) rays
 
+drawRays : Px -> List Intersection -> List DrawOp
+drawRays mousePos rays =
+    --  let _ = Debug.log "rays" rays
+    --  in
+    List.concatMap (\a -> line (Point.fromFloats ( mousePos.x, mousePos.y )) (Point.fromFloats ( a.x, a.y ))) rays
 
 
 type ClickState
@@ -199,7 +207,7 @@ update message ( canvas, clickState, mousePos ) =
         mouseDot =
             [ BeginPath
             , FillStyle Color.red
-            , Arc mousePos 4 0 (2 * 3.1415)
+            , Arc mousePos 4 0 (2 * pi)
             , Fill
             ]
 
@@ -207,12 +215,15 @@ update message ( canvas, clickState, mousePos ) =
             [ ClearRect (Point.fromInts ( 0, 0 )) { width = 640, height = 360 } ]
 
         toPx : Point -> Px
-        toPx p  =
-          let (x,y) = Point.toFloats p
-          in
-            (Px x y)
+        toPx p =
+            let
+                ( x, y ) =
+                    Point.toFloats p
+            in
+                (Px x y)
 
-        rays = castRays (toPx mousePos)
+        rays =
+            castRays (toPx mousePos)
 
         canvas_ =
             canvas
