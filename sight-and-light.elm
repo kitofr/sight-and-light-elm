@@ -14,54 +14,128 @@ main =
         { model =
             ( Canvas.initialize (Size 640 360)
                 |> Canvas.batch drawWalls
-            , Nothing
+            , NoClick
             , Point.fromInts (0, 0)
             )
         , view = view
         , update = update
         }
 
+--findRay : Float -> Px -> List Px -> List Ray
+--findRay angle mousePos segments =
+--      let dx = cos(angle)
+--          dy = sin(angle)
+--          ray = createRay mousePos.x mousePos.y (mousePos.x + dx) (mousePos.y + dy) 
+--      in
+--        List.foldl (\segment closest -> 
+--            case getIntersection ray segment of
+--              Just point -> 
+--                if point.param < closest.param then     
+--                  point
+--                else
+--                  closest
+--              Nothing -> closest
+--          ) segments
+       
+--castRays : Px -> List Point -> List Ray
+--castRays mousePos segments =
+--  let          
+--    fullCircle = List.map (\x -> (toFloat x) + (3.1415 * 2)/50) (List.range 0 50)  
+--  in
+--    List.concatMap (\angle -> findRay angle mousePos segments) fullCircle
+    --  |> List.filter Justs 
+  
+  
+type alias Px =
+  { x : Float
+  , y : Float
+  }
+
+type alias Intersection =
+  { x : Float
+  , y : Float
+  , param : Float
+  }
+
+type alias Ray =
+  { a: Px
+  , b: Px
+  }
+
+createRay : Float -> Float -> Float -> Float -> Ray
+createRay ax ay bx by =
+  Ray (Px ax ay) (Px bx by)
+
+getIntersection : Ray -> Ray -> Maybe Intersection
+getIntersection ray segment =
+  let rPx = ray.a.x
+      rPy = ray.a.y
+      rDx = ray.b.x
+      rDy = ray.b.y
+      sPx = segment.a.x
+      sPy = segment.a.y
+      sDx = segment.b.x
+      sDy = segment.b.y
+      rMag = sqrt(rDx * rDx + rDy * rDy)
+      sMag = sqrt(sDx * sDx + sDy * sDy)
+  in
+      if(rDx/rMag == sDx/sMag && rDy/rMag == sDy / sMag) then
+        Nothing
+      else
+        let t2 = (rDx*(sPy-rPy) + rDy*(rPx-sPx))/(sDx*rDy - sDy*rDx)
+            t1 = (sPx+sDx*t2-rPx)/rDx 
+        in
+            if t1 < 0 then
+              Nothing
+            else if t2 < 0 || t2 > 1 then
+              Nothing
+            else
+            Just { x = rPx + rDx * t1
+                 , y = rPy + rDy * t1
+                 , param = t1
+                 }
+
+segments : List Ray
+segments =
+      [   createRay 0 0 640 0
+        , createRay 640 0 640 360
+        , createRay 640 360 0 360
+        , createRay 0 360 0 0
+
+        , createRay 100 150 120 50
+        , createRay 120 50 200 80
+        , createRay 200 80 140 210
+        , createRay 140 210 100 150
+
+        , createRay 100 200 120 250
+        , createRay 120 250 60 300
+        , createRay 60 300 100 200
+
+        , createRay 200 260 220 150
+        , createRay 220 150 300 200
+        , createRay 300 200 350 320
+        , createRay 350 320 200 260
+
+        , createRay 340 60 360 40
+        , createRay 360 40 370 70
+        , createRay 370 70 340 60
+
+        , createRay 450 190 560 170
+        , createRay 560 170 540 270
+        , createRay 540 270 430 290
+        , createRay 430 290 450 190
+
+        , createRay 400 95 580 50
+        , createRay 580 50 480 150
+        , createRay 480 150 400 95
+      ]
 
 drawWalls : List DrawOp
 drawWalls =
-    List.concat
-        [ -- Border
-          line (Point.fromInts ( 0, 0 )) (Point.fromInts ( 640, 0 ))
-        , line (Point.fromInts ( 640, 0 )) (Point.fromInts ( 640, 360 ))
-        , line (Point.fromInts ( 640, 360 )) (Point.fromInts ( 0, 360 ))
-        , line (Point.fromInts ( 0, 360 )) (Point.fromInts ( 0, 0 ))
-        , -- Polygon #1
-          line (Point.fromInts ( 100, 150 )) (Point.fromInts ( 120, 50 ))
-        , line (Point.fromInts ( 120, 50 )) (Point.fromInts ( 200, 80 ))
-        , line (Point.fromInts ( 200, 80 )) (Point.fromInts ( 140, 210 ))
-        , line (Point.fromInts ( 140, 210 )) (Point.fromInts ( 100, 150 ))
-        , -- Polygon #2
-          line (Point.fromInts ( 100, 200 )) (Point.fromInts ( 120, 250 ))
-        , line (Point.fromInts ( 120, 250 )) (Point.fromInts ( 60, 300 ))
-        , line (Point.fromInts ( 60, 300 )) (Point.fromInts ( 100, 200 ))
-        , -- Polygon #3
-          line (Point.fromInts ( 200, 260 )) (Point.fromInts ( 220, 150 ))
-        , line (Point.fromInts ( 220, 150 )) (Point.fromInts ( 300, 200 ))
-        , line (Point.fromInts ( 300, 200 )) (Point.fromInts ( 350, 320 ))
-        , line (Point.fromInts ( 350, 320 )) (Point.fromInts ( 200, 260 ))
-        , -- Polygon #4
-          line (Point.fromInts ( 340, 60 )) (Point.fromInts ( 360, 40 ))
-        , line (Point.fromInts ( 360, 40 )) (Point.fromInts ( 370, 70 ))
-        , line (Point.fromInts ( 370, 70 )) (Point.fromInts ( 340, 60 ))
-        , -- Polygon #5
-          line (Point.fromInts ( 450, 190 )) (Point.fromInts ( 560, 170 ))
-        , line (Point.fromInts ( 560, 170 )) (Point.fromInts ( 540, 270 ))
-        , line (Point.fromInts ( 540, 270 )) (Point.fromInts ( 430, 290 ))
-        , line (Point.fromInts ( 430, 290 )) (Point.fromInts ( 450, 190 ))
-        , -- Polygon #6
-          line (Point.fromInts ( 400, 95 )) (Point.fromInts ( 580, 50 ))
-        , line (Point.fromInts ( 580, 50 )) (Point.fromInts ( 480, 150 ))
-        , line (Point.fromInts ( 480, 150 )) (Point.fromInts ( 400, 95 ))
-        ]
-
+  List.concatMap (\{ a, b } -> line (Point.fromFloats (a.x, a.y)) (Point.fromFloats (b.x, b.y))) segments
 
 type ClickState
-    = Nothing
+    = NoClick
     | FirstClick Point
     | Moving Point Point
 
@@ -92,19 +166,19 @@ update message ( canvas, clickState, mousePos ) =
     case message of
         Click position ->
             case clickState of
-                Nothing ->
+                NoClick ->
                     ( canvas_, FirstClick position, mousePos )
 
                 FirstClick p1 ->
                     ( canvas_, clickState, mousePos )
 
                 Moving p0 p1 ->
-                    ( drawLine p0 p1 canvas_, Nothing, mousePos )
+                    ( drawLine p0 p1 canvas_, NoClick, mousePos )
 
         Move position ->
             case clickState of
-                Nothing ->
-                    ( canvas_, Nothing, position)
+                NoClick ->
+                    ( canvas_, NoClick, position)
 
                 FirstClick p0 ->
                     ( canvas_, Moving p0 position, position )
@@ -127,7 +201,7 @@ view model =
 handleClickState : Model -> Canvas
 handleClickState ( canvas, clickState, mousePos ) =
     case clickState of
-        Nothing ->
+        NoClick ->
             canvas
 
         FirstClick _ ->
