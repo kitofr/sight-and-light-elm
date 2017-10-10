@@ -88,27 +88,14 @@ createRay : Float -> Float -> Float -> Float -> Ray
 createRay ax ay bx by =
     Ray (Px ax ay) (Px bx by)
 
-
-getIntersection : Ray -> Ray -> Maybe Intersection
-getIntersection ray segment =
-    let
-        rPx =
-            ray.a.x
-
-        rPy =
-            ray.a.y
-
+isParallel : Ray -> Ray -> Bool
+isParallel ray segment =
+  let 
         rDx =
             ray.b.x
 
         rDy =
             ray.b.y
-
-        sPx =
-            segment.a.x
-
-        sPy =
-            segment.a.y
 
         sDx =
             segment.b.x
@@ -121,8 +108,38 @@ getIntersection ray segment =
 
         sMag =
             sqrt (sDx * sDx + sDy * sDy)
+  in
+    (rDx / rMag == sDx / sMag && rDy / rMag == sDy / sMag)
+
+getIntersection : Ray -> Ray -> Maybe Intersection
+getIntersection ray segment =
+    let
+        rPx =
+            ray.a.x
+
+        rPy =
+            ray.a.y
+
+        rDx =
+            ray.b.x - ray.a.x
+
+        rDy =
+            ray.b.y - ray.a.y
+
+        sPx =
+            segment.a.x
+
+        sPy =
+            segment.a.y
+
+        sDx =
+            segment.b.x - segment.a.x
+
+        sDy =
+            segment.b.y - segment.a.y
+
     in
-        if (rDx / rMag == sDx / sMag && rDy / rMag == sDy / sMag) then
+        if isParallel ray segment then
             Nothing
         else
             let
@@ -182,17 +199,17 @@ drawDot : Intersection -> List DrawOp
 drawDot { x, y } =
   [ BeginPath
   , FillStyle Color.blue
-  , Arc (Point.fromFloats ( x, y )) 2 0 (2 * pi)
+  , Arc (Point.fromFloats ( x, y )) 3 0 (2 * pi)
   , Fill
   ]
 
 drawRays : Px -> List Intersection -> List DrawOp
-drawRays mousePos rays =
+drawRays mouse rays =
     let
         intersections =
             List.map
                 (\segment ->
-                    getIntersection (createRay 300 180 mousePos.x mousePos.y) segment
+                    getIntersection (createRay 300 180 mouse.x mouse.y) segment
                 )
                 segments
                 |> List.filterMap identity
@@ -203,7 +220,7 @@ drawRays mousePos rays =
             List.concatMap drawDot intersections
 
         lineFromCenterToMouse =
-            List.concatMap (\a -> line (Point.fromFloats ( 300, 180 )) (Point.fromFloats ( a.x, a.y ))) [ mousePos ]
+            List.concatMap (\a -> line (Point.fromFloats ( 300, 180 )) (Point.fromFloats ( a.x, a.y ))) [ mouse ]
     in
         --List.concatMap (\a -> line (Point.fromFloats ( 300, 180 )) (Point.fromFloats ( a.x, a.y ))) rays
         List.concat [ dots, lineFromCenterToMouse ]
