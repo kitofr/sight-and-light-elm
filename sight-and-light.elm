@@ -36,6 +36,7 @@ toPx p =
     in
         (Px x y)
 
+
 main =
     Html.beginnerProgram
         { model =
@@ -96,9 +97,10 @@ createRay : Float -> Float -> Float -> Float -> Ray
 createRay ax ay bx by =
     Ray (Px ax ay) (Px bx by)
 
+
 isParallel : Ray -> Ray -> Bool
 isParallel ray segment =
-  let 
+    let
         rDx =
             ray.b.x
 
@@ -116,8 +118,9 @@ isParallel ray segment =
 
         sMag =
             sqrt (sDx * sDx + sDy * sDy)
-  in
-    (rDx / rMag == sDx / sMag && rDy / rMag == sDy / sMag)
+    in
+        (rDx / rMag == sDx / sMag && rDy / rMag == sDy / sMag)
+
 
 getIntersection : Ray -> Ray -> Maybe Intersection
 getIntersection ray segment =
@@ -145,7 +148,6 @@ getIntersection ray segment =
 
         sDy =
             segment.b.y - segment.a.y
-
     in
         if isParallel ray segment then
             Nothing
@@ -203,13 +205,15 @@ drawWalls : List DrawOp
 drawWalls =
     List.concatMap (\{ a, b } -> line (Point.fromFloats ( a.x, a.y )) (Point.fromFloats ( b.x, b.y ))) segments
 
+
 drawDot : Intersection -> List DrawOp
 drawDot { x, y } =
-  [ BeginPath
-  , FillStyle Color.blue
-  , Arc (Point.fromFloats ( x, y )) 3 0 (2 * pi)
-  , Fill
-  ]
+    [ BeginPath
+    , FillStyle Color.blue
+    , Arc (Point.fromFloats ( x, y )) 3 0 (2 * pi)
+    , Fill
+    ]
+
 
 drawRays : Px -> List Intersection -> List DrawOp
 drawRays mouse rays =
@@ -222,18 +226,17 @@ drawRays mouse rays =
                 segments
                 |> List.filterMap identity
 
-
         dots =
             List.concatMap drawDot intersections
-
     in
-        List.concatMap (\a -> 
-          [ line (Point.fromFloats ( mouse.x, mouse.y )) (Point.fromFloats ( a.x, a.y ))
-          , drawDot {x = a.x, y = a.y, param = 0 }
-          ]
-        ) rays
-          |> List.concat
-        --List.concat [ dots, lineFromCenterToMouse ]
+        List.concatMap
+            (\a ->
+                [ line (Point.fromFloats ( mouse.x, mouse.y )) (Point.fromFloats ( a.x, a.y ))
+                , drawDot { x = a.x, y = a.y, param = 0 }
+                ]
+            )
+            rays
+            |> List.concat
 
 
 type ClickState
