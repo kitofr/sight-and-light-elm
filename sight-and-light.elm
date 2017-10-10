@@ -28,6 +28,14 @@ type alias Ray =
     }
 
 
+toPx : Point -> Px
+toPx p =
+    let
+        ( x, y ) =
+            Point.toFloats p
+    in
+        (Px x y)
+
 main =
     Html.beginnerProgram
         { model =
@@ -213,17 +221,19 @@ drawRays mouse rays =
                 )
                 segments
                 |> List.filterMap identity
-                |> Debug.log "intersections"
 
 
         dots =
             List.concatMap drawDot intersections
 
-        lineFromCenterToMouse =
-            List.concatMap (\a -> line (Point.fromFloats ( 300, 180 )) (Point.fromFloats ( a.x, a.y ))) [ mouse ]
     in
-        --List.concatMap (\a -> line (Point.fromFloats ( 300, 180 )) (Point.fromFloats ( a.x, a.y ))) rays
-        List.concat [ dots, lineFromCenterToMouse ]
+        List.concatMap (\a -> 
+          [ line (Point.fromFloats ( mouse.x, mouse.y )) (Point.fromFloats ( a.x, a.y ))
+          , drawDot {x = a.x, y = a.y, param = 0 }
+          ]
+        ) rays
+          |> List.concat
+        --List.concat [ dots, lineFromCenterToMouse ]
 
 
 type ClickState
@@ -253,14 +263,6 @@ update message ( canvas, clickState, mousePos ) =
 
         clear =
             [ ClearRect (Point.fromInts ( 0, 0 )) { width = 640, height = 360 } ]
-
-        toPx : Point -> Px
-        toPx p =
-            let
-                ( x, y ) =
-                    Point.toFloats p
-            in
-                (Px x y)
 
         rays =
             castRays (toPx mousePos)
