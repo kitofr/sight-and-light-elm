@@ -7,6 +7,7 @@ import Canvas.Point exposing (Point)
 import Canvas.Point as Point
 import Canvas.Events
 import Color exposing (Color)
+import Dict exposing (Dict)
 
 
 type alias Px =
@@ -78,19 +79,70 @@ findClosestIntersection angle mousePos =
             segments
 
 
-castRays : Px -> List Intersection
-castRays mousePos =
+fullCircle : List Float
+fullCircle =
     let
         steps =
             50
 
         stepAdjustment =
             pi * 2 / steps
-
-        fullCircle =
-            List.scanl (\_ b -> b + stepAdjustment) 0 (List.map toFloat (List.range 0 steps))
     in
-        List.map (\angle -> findClosestIntersection angle mousePos) fullCircle
+        List.scanl (\_ b -> b + stepAdjustment) 0 (List.map toFloat (List.range 0 steps))
+
+
+unique : (a -> comparable) -> List a -> List a
+unique f l =
+    l
+        |> groupBy f
+        |> Dict.map (\_ v -> List.head v)
+        |> Dict.toList
+        |> List.filterMap (\( a, b ) -> b)
+
+
+groupBy : (a -> comparable) -> List a -> Dict comparable (List a)
+groupBy f l =
+    let
+        upd e acc =
+            let
+                fe =
+                    f e
+            in
+                case Dict.get fe acc of
+                    Just l_ ->
+                        acc |> Dict.insert fe (e :: l_)
+
+                    Nothing ->
+                        acc |> Dict.insert fe [ e ]
+    in
+        l |> List.foldr upd Dict.empty
+
+
+uniquePoints : List Px
+uniquePoints =
+    List.concatMap (\ray -> [ ray.a, ray.b ]) segments
+        |> unique (\p -> toString ( p.x, p.y ))
+
+
+angles : Px -> List Px -> List Float
+angles mouse points =
+    points
+        |> List.concatMap
+            (\point ->
+                let
+                    angle =
+                        atan2 (point.y - mouse.y) (point.x - mouse.x)
+
+                    padding =
+                        0.00001
+                in
+                    [ angle - padding, angle, angle + padding ]
+            )
+
+
+castRays : Px -> List Intersection
+castRays mousePos =
+    List.map (\angle -> findClosestIntersection angle mousePos) (angles mousePos uniquePoints)
 
 
 createRay : Float -> Float -> Float -> Float -> Ray
