@@ -51,7 +51,7 @@ main =
         }
 
 
-findClosestIntersection : Float -> Px -> Intersection
+findClosestIntersection : Float -> Px -> Maybe Intersection
 findClosestIntersection angle mousePos =
     let
         dx =
@@ -67,15 +67,20 @@ findClosestIntersection angle mousePos =
             (\segment closest ->
                 case getIntersection ray segment of
                     Just point ->
-                        if point.param < closest.param then
-                            point
-                        else
-                            closest
+                        case closest of
+                            Just closestPoint ->
+                                if point.param < closestPoint.param then
+                                    Just point
+                                else
+                                    Just closestPoint
+
+                            Nothing ->
+                                Just point
 
                     Nothing ->
                         closest
             )
-            { x = 0, y = 0, param = 600 }
+            Nothing
             segments
 
 
@@ -122,6 +127,7 @@ uniquePoints : List Px
 uniquePoints =
     List.concatMap (\ray -> [ ray.a, ray.b ]) segments
         |> unique (\p -> toString ( p.x, p.y ))
+        |> Debug.log "points"
 
 
 angles : Px -> List Px -> List Float
@@ -147,7 +153,7 @@ getIntersections mousePos =
         uniqueAngles =
             (angles mousePos uniquePoints)
     in
-        List.map (\angle -> findClosestIntersection angle mousePos) uniqueAngles
+        List.filterMap (\angle -> findClosestIntersection angle mousePos) uniqueAngles
 
 
 createRay : Float -> Float -> Float -> Float -> Ray
@@ -275,12 +281,15 @@ drawDot { x, y } =
 drawVisiblePolygon : List Intersection -> List DrawOp
 drawVisiblePolygon rays =
     case rays of
-      h :: t -> 
-        let lines = List.map (\{param, x, y} -> LineTo (Point.fromFloats (x, y))) t
-        in
-          List.concat [ [BeginPath, FillStyle Color.yellow], lines, [Fill]]
-          
-      [] -> []
+        h :: t ->
+            let
+                lines =
+                    List.map (\{ param, x, y } -> LineTo (Point.fromFloats ( x, y ))) t
+            in
+                List.concat [ [ BeginPath, FillStyle Color.yellow ], lines, [ Fill ] ]
+
+        [] ->
+            []
 
 
 drawRays : Px -> List Intersection -> List DrawOp
