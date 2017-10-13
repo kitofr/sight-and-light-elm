@@ -138,11 +138,16 @@ angles mouse points =
                 in
                     [ angle - padding, angle, angle + padding ]
             )
+        |> List.sort
 
 
-castRays : Px -> List Intersection
-castRays mousePos =
-    List.map (\angle -> findClosestIntersection angle mousePos) (angles mousePos uniquePoints)
+getIntersections : Px -> List Intersection
+getIntersections mousePos =
+    let
+        uniqueAngles =
+            (angles mousePos uniquePoints)
+    in
+        List.map (\angle -> findClosestIntersection angle mousePos) uniqueAngles
 
 
 createRay : Float -> Float -> Float -> Float -> Ray
@@ -267,6 +272,17 @@ drawDot { x, y } =
     ]
 
 
+drawVisiblePolygon : List Intersection -> List DrawOp
+drawVisiblePolygon rays =
+    case rays of
+      h :: t -> 
+        let lines = List.map (\{param, x, y} -> LineTo (Point.fromFloats (x, y))) t
+        in
+          List.concat [ [BeginPath, FillStyle Color.blue], lines, [Fill]]
+          
+      [] -> []
+
+
 drawRays : Px -> List Intersection -> List DrawOp
 drawRays mouse rays =
     let
@@ -283,7 +299,7 @@ drawRays mouse rays =
     in
         List.concatMap
             (\a ->
-                [ line (Point.fromFloats ( mouse.x, mouse.y )) (Point.fromFloats ( a.x, a.y ))
+                [ colorLine (Point.fromFloats ( mouse.x, mouse.y )) (Point.fromFloats ( a.x, a.y )) Color.gray
                 , drawDot { x = a.x, y = a.y, param = 0 }
                 ]
             )
@@ -320,11 +336,19 @@ update message ( canvas, clickState, mousePos ) =
             [ ClearRect (Point.fromInts ( 0, 0 )) { width = 640, height = 360 } ]
 
         rays =
-            castRays (toPx mousePos)
+            getIntersections (toPx mousePos)
 
         canvas_ =
             canvas
-                |> Canvas.batch (List.concat [ clear, mouseDot, drawWalls, drawRays (toPx mousePos) rays ])
+                |> Canvas.batch
+                    (List.concat
+                        [ clear
+                        , drawWalls
+                        , drawRays (toPx mousePos) rays
+                        , drawVisiblePolygon rays
+                        , mouseDot
+                        ]
+                    )
     in
         case message of
             Click position ->
@@ -372,6 +396,12 @@ handleClickState ( canvas, clickState, mousePos ) =
 
         Moving p0 p1 ->
             drawLine p0 p1 canvas
+
+
+colorLine : Point -> Point -> Color -> List DrawOp
+colorLine p0 p1 color =
+    line p0 p1
+        |> List.append [ StrokeStyle color ]
 
 
 line : Point -> Point -> List DrawOp
