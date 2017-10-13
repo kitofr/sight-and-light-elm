@@ -9474,49 +9474,44 @@ var _kitofr$sight_and_light_elm$Main$handleClickState = function (_p0) {
 	}
 };
 var _kitofr$sight_and_light_elm$Main$drawVisiblePolygon = function (rays) {
-	var _p4 = rays;
-	if (_p4.ctor === '::') {
-		var lines = A2(
-			_elm_lang$core$List$map,
-			function (_p5) {
-				var _p6 = _p5;
-				return _kitofr$sight_and_light_elm$Canvas$LineTo(
-					_kitofr$sight_and_light_elm$Canvas_Point$fromFloats(
-						{ctor: '_Tuple2', _0: _p6.x, _1: _p6.y}));
-			},
-			_p4._1);
-		return _elm_lang$core$List$concat(
-			{
+	var lines = A2(
+		_elm_lang$core$List$map,
+		function (_p4) {
+			var _p5 = _p4;
+			return _kitofr$sight_and_light_elm$Canvas$LineTo(
+				_kitofr$sight_and_light_elm$Canvas_Point$fromFloats(
+					{ctor: '_Tuple2', _0: _p5.x, _1: _p5.y}));
+		},
+		rays);
+	return _elm_lang$core$List$concat(
+		{
+			ctor: '::',
+			_0: {
 				ctor: '::',
-				_0: {
-					ctor: '::',
-					_0: _kitofr$sight_and_light_elm$Canvas$BeginPath,
-					_1: {
-						ctor: '::',
-						_0: _kitofr$sight_and_light_elm$Canvas$FillStyle(_elm_lang$core$Color$yellow),
-						_1: {ctor: '[]'}
-					}
-				},
+				_0: _kitofr$sight_and_light_elm$Canvas$BeginPath,
 				_1: {
 					ctor: '::',
-					_0: lines,
-					_1: {
-						ctor: '::',
-						_0: {
-							ctor: '::',
-							_0: _kitofr$sight_and_light_elm$Canvas$Fill,
-							_1: {ctor: '[]'}
-						},
-						_1: {ctor: '[]'}
-					}
+					_0: _kitofr$sight_and_light_elm$Canvas$FillStyle(_elm_lang$core$Color$yellow),
+					_1: {ctor: '[]'}
 				}
-			});
-	} else {
-		return {ctor: '[]'};
-	}
+			},
+			_1: {
+				ctor: '::',
+				_0: lines,
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '::',
+						_0: _kitofr$sight_and_light_elm$Canvas$Fill,
+						_1: {ctor: '[]'}
+					},
+					_1: {ctor: '[]'}
+				}
+			}
+		});
 };
-var _kitofr$sight_and_light_elm$Main$drawDot = function (_p7) {
-	var _p8 = _p7;
+var _kitofr$sight_and_light_elm$Main$drawDot = function (_p6) {
+	var _p7 = _p6;
 	return {
 		ctor: '::',
 		_0: _kitofr$sight_and_light_elm$Canvas$BeginPath,
@@ -9528,7 +9523,7 @@ var _kitofr$sight_and_light_elm$Main$drawDot = function (_p7) {
 				_0: A4(
 					_kitofr$sight_and_light_elm$Canvas$Arc,
 					_kitofr$sight_and_light_elm$Canvas_Point$fromFloats(
-						{ctor: '_Tuple2', _0: _p8.x, _1: _p8.y}),
+						{ctor: '_Tuple2', _0: _p7.x, _1: _p7.y}),
 					3,
 					0,
 					2 * _elm_lang$core$Basics$pi),
@@ -9599,12 +9594,12 @@ var _kitofr$sight_and_light_elm$Main$groupBy = F2(
 		var upd = F2(
 			function (e, acc) {
 				var fe = f(e);
-				var _p9 = A2(_elm_lang$core$Dict$get, fe, acc);
-				if (_p9.ctor === 'Just') {
+				var _p8 = A2(_elm_lang$core$Dict$get, fe, acc);
+				if (_p8.ctor === 'Just') {
 					return A3(
 						_elm_lang$core$Dict$insert,
 						fe,
-						{ctor: '::', _0: e, _1: _p9._0},
+						{ctor: '::', _0: e, _1: _p8._0},
 						acc);
 				} else {
 					return A3(
@@ -9624,15 +9619,15 @@ var _kitofr$sight_and_light_elm$Main$unique = F2(
 	function (f, l) {
 		return A2(
 			_elm_lang$core$List$filterMap,
-			function (_p10) {
-				var _p11 = _p10;
-				return _p11._1;
+			function (_p9) {
+				var _p10 = _p9;
+				return _p10._1;
 			},
 			_elm_lang$core$Dict$toList(
 				A2(
 					_elm_lang$core$Dict$map,
 					F2(
-						function (_p12, v) {
+						function (_p11, v) {
 							return _elm_lang$core$List$head(v);
 						}),
 					A2(_kitofr$sight_and_light_elm$Main$groupBy, f, l))));
@@ -9643,7 +9638,7 @@ var _kitofr$sight_and_light_elm$Main$fullCircle = function () {
 	return A3(
 		_elm_lang$core$List$scanl,
 		F2(
-			function (_p13, b) {
+			function (_p12, b) {
 				return b + stepAdjustment;
 			}),
 		0,
@@ -9657,9 +9652,9 @@ var _kitofr$sight_and_light_elm$Main$Px = F2(
 		return {x: a, y: b};
 	});
 var _kitofr$sight_and_light_elm$Main$toPx = function (p) {
-	var _p14 = _kitofr$sight_and_light_elm$Canvas_Point$toFloats(p);
-	var x = _p14._0;
-	var y = _p14._1;
+	var _p13 = _kitofr$sight_and_light_elm$Canvas_Point$toFloats(p);
+	var x = _p13._0;
+	var y = _p13._1;
 	return A2(_kitofr$sight_and_light_elm$Main$Px, x, y);
 };
 var _kitofr$sight_and_light_elm$Main$Intersection = F3(
@@ -9787,41 +9782,50 @@ var _kitofr$sight_and_light_elm$Main$findClosestIntersection = F2(
 			_elm_lang$core$List$foldl,
 			F2(
 				function (segment, closest) {
-					var _p15 = A2(_kitofr$sight_and_light_elm$Main$getIntersection, ray, segment);
-					if (_p15.ctor === 'Just') {
-						var _p16 = _p15._0;
-						return (_elm_lang$core$Native_Utils.cmp(_p16.param, closest.param) < 0) ? _p16 : closest;
+					var _p14 = A2(_kitofr$sight_and_light_elm$Main$getIntersection, ray, segment);
+					if (_p14.ctor === 'Just') {
+						var _p17 = _p14._0;
+						var _p15 = closest;
+						if (_p15.ctor === 'Just') {
+							var _p16 = _p15._0;
+							return (_elm_lang$core$Native_Utils.cmp(_p17.param, _p16.param) < 0) ? _elm_lang$core$Maybe$Just(_p17) : _elm_lang$core$Maybe$Just(_p16);
+						} else {
+							return _elm_lang$core$Maybe$Just(_p17);
+						}
 					} else {
 						return closest;
 					}
 				}),
-			{x: 0, y: 0, param: 600},
+			_elm_lang$core$Maybe$Nothing,
 			_kitofr$sight_and_light_elm$Main$segments);
 	});
 var _kitofr$sight_and_light_elm$Main$uniquePoints = A2(
-	_kitofr$sight_and_light_elm$Main$unique,
-	function (p) {
-		return _elm_lang$core$Basics$toString(
-			{ctor: '_Tuple2', _0: p.x, _1: p.y});
-	},
+	_elm_lang$core$Debug$log,
+	'points',
 	A2(
-		_elm_lang$core$List$concatMap,
-		function (ray) {
-			return {
-				ctor: '::',
-				_0: ray.a,
-				_1: {
-					ctor: '::',
-					_0: ray.b,
-					_1: {ctor: '[]'}
-				}
-			};
+		_kitofr$sight_and_light_elm$Main$unique,
+		function (p) {
+			return _elm_lang$core$Basics$toString(
+				{ctor: '_Tuple2', _0: p.x, _1: p.y});
 		},
-		_kitofr$sight_and_light_elm$Main$segments));
+		A2(
+			_elm_lang$core$List$concatMap,
+			function (ray) {
+				return {
+					ctor: '::',
+					_0: ray.a,
+					_1: {
+						ctor: '::',
+						_0: ray.b,
+						_1: {ctor: '[]'}
+					}
+				};
+			},
+			_kitofr$sight_and_light_elm$Main$segments)));
 var _kitofr$sight_and_light_elm$Main$getIntersections = function (mousePos) {
 	var uniqueAngles = A2(_kitofr$sight_and_light_elm$Main$angles, mousePos, _kitofr$sight_and_light_elm$Main$uniquePoints);
 	return A2(
-		_elm_lang$core$List$map,
+		_elm_lang$core$List$filterMap,
 		function (angle) {
 			return A2(_kitofr$sight_and_light_elm$Main$findClosestIntersection, angle, mousePos);
 		},
@@ -9829,16 +9833,16 @@ var _kitofr$sight_and_light_elm$Main$getIntersections = function (mousePos) {
 };
 var _kitofr$sight_and_light_elm$Main$drawWalls = A2(
 	_elm_lang$core$List$concatMap,
-	function (_p17) {
-		var _p18 = _p17;
-		var _p20 = _p18.b;
-		var _p19 = _p18.a;
+	function (_p18) {
+		var _p19 = _p18;
+		var _p21 = _p19.b;
+		var _p20 = _p19.a;
 		return A2(
 			_kitofr$sight_and_light_elm$Main$line,
 			_kitofr$sight_and_light_elm$Canvas_Point$fromFloats(
-				{ctor: '_Tuple2', _0: _p19.x, _1: _p19.y}),
+				{ctor: '_Tuple2', _0: _p20.x, _1: _p20.y}),
 			_kitofr$sight_and_light_elm$Canvas_Point$fromFloats(
-				{ctor: '_Tuple2', _0: _p20.x, _1: _p20.y}));
+				{ctor: '_Tuple2', _0: _p21.x, _1: _p21.y}));
 	},
 	_kitofr$sight_and_light_elm$Main$segments);
 var _kitofr$sight_and_light_elm$Main$drawRays = F2(
@@ -9888,12 +9892,10 @@ var _kitofr$sight_and_light_elm$Main$FirstClick = function (a) {
 };
 var _kitofr$sight_and_light_elm$Main$NoClick = {ctor: 'NoClick'};
 var _kitofr$sight_and_light_elm$Main$update = F2(
-	function (message, _p21) {
-		var _p22 = _p21;
-		var _p28 = _p22._2;
-		var _p27 = _p22._1;
-		var rays = _kitofr$sight_and_light_elm$Main$getIntersections(
-			_kitofr$sight_and_light_elm$Main$toPx(_p28));
+	function (message, _p22) {
+		var _p23 = _p22;
+		var _p29 = _p23._2;
+		var _p28 = _p23._1;
 		var clear = {
 			ctor: '::',
 			_0: A2(
@@ -9903,6 +9905,7 @@ var _kitofr$sight_and_light_elm$Main$update = F2(
 				{width: 640, height: 360}),
 			_1: {ctor: '[]'}
 		};
+		var mouse = _p29;
 		var mouseDot = {
 			ctor: '::',
 			_0: _kitofr$sight_and_light_elm$Canvas$BeginPath,
@@ -9911,7 +9914,7 @@ var _kitofr$sight_and_light_elm$Main$update = F2(
 				_0: _kitofr$sight_and_light_elm$Canvas$FillStyle(_elm_lang$core$Color$red),
 				_1: {
 					ctor: '::',
-					_0: A4(_kitofr$sight_and_light_elm$Canvas$Arc, _p28, 4, 0, 2 * _elm_lang$core$Basics$pi),
+					_0: A4(_kitofr$sight_and_light_elm$Canvas$Arc, mouse, 4, 0, 2 * _elm_lang$core$Basics$pi),
 					_1: {
 						ctor: '::',
 						_0: _kitofr$sight_and_light_elm$Canvas$Fill,
@@ -9920,6 +9923,11 @@ var _kitofr$sight_and_light_elm$Main$update = F2(
 				}
 			}
 		};
+		var rays = A2(
+			_elm_lang$core$Debug$log,
+			'rays',
+			_kitofr$sight_and_light_elm$Main$getIntersections(
+				_kitofr$sight_and_light_elm$Main$toPx(mouse)));
 		var canvas_ = A2(
 			_kitofr$sight_and_light_elm$Canvas$batch,
 			_elm_lang$core$List$concat(
@@ -9936,7 +9944,7 @@ var _kitofr$sight_and_light_elm$Main$update = F2(
 								ctor: '::',
 								_0: A2(
 									_kitofr$sight_and_light_elm$Main$drawRays,
-									_kitofr$sight_and_light_elm$Main$toPx(_p28),
+									_kitofr$sight_and_light_elm$Main$toPx(mouse),
 									rays),
 								_1: {
 									ctor: '::',
@@ -9947,47 +9955,47 @@ var _kitofr$sight_and_light_elm$Main$update = F2(
 						}
 					}
 				}),
-			_p22._0);
-		var _p23 = message;
-		if (_p23.ctor === 'Click') {
-			var _p24 = _p27;
-			switch (_p24.ctor) {
+			_p23._0);
+		var _p24 = message;
+		if (_p24.ctor === 'Click') {
+			var _p25 = _p28;
+			switch (_p25.ctor) {
 				case 'NoClick':
 					return {
 						ctor: '_Tuple3',
 						_0: canvas_,
-						_1: _kitofr$sight_and_light_elm$Main$FirstClick(_p23._0),
-						_2: _p28
+						_1: _kitofr$sight_and_light_elm$Main$FirstClick(_p24._0),
+						_2: _p29
 					};
 				case 'FirstClick':
-					return {ctor: '_Tuple3', _0: canvas_, _1: _p27, _2: _p28};
+					return {ctor: '_Tuple3', _0: canvas_, _1: _p28, _2: _p29};
 				default:
 					return {
 						ctor: '_Tuple3',
-						_0: A3(_kitofr$sight_and_light_elm$Main$drawLine, _p24._0, _p24._1, canvas_),
+						_0: A3(_kitofr$sight_and_light_elm$Main$drawLine, _p25._0, _p25._1, canvas_),
 						_1: _kitofr$sight_and_light_elm$Main$NoClick,
-						_2: _p28
+						_2: _p29
 					};
 			}
 		} else {
-			var _p26 = _p23._0;
-			var _p25 = _p27;
-			switch (_p25.ctor) {
+			var _p27 = _p24._0;
+			var _p26 = _p28;
+			switch (_p26.ctor) {
 				case 'NoClick':
-					return {ctor: '_Tuple3', _0: canvas_, _1: _kitofr$sight_and_light_elm$Main$NoClick, _2: _p26};
+					return {ctor: '_Tuple3', _0: canvas_, _1: _kitofr$sight_and_light_elm$Main$NoClick, _2: _p27};
 				case 'FirstClick':
 					return {
 						ctor: '_Tuple3',
 						_0: canvas_,
-						_1: A2(_kitofr$sight_and_light_elm$Main$Moving, _p25._0, _p26),
-						_2: _p26
+						_1: A2(_kitofr$sight_and_light_elm$Main$Moving, _p26._0, _p27),
+						_2: _p27
 					};
 				default:
 					return {
 						ctor: '_Tuple3',
 						_0: canvas_,
-						_1: A2(_kitofr$sight_and_light_elm$Main$Moving, _p25._0, _p26),
-						_2: _p26
+						_1: A2(_kitofr$sight_and_light_elm$Main$Moving, _p26._0, _p27),
+						_2: _p27
 					};
 			}
 		}
