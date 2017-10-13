@@ -280,16 +280,11 @@ drawDot { x, y } =
 
 drawVisiblePolygon : List Intersection -> List DrawOp
 drawVisiblePolygon rays =
-    case rays of
-        h :: t ->
-            let
-                lines =
-                    List.map (\{ param, x, y } -> LineTo (Point.fromFloats ( x, y ))) t
-            in
-                List.concat [ [ BeginPath, FillStyle Color.yellow ], lines, [ Fill ] ]
-
-        [] ->
-            []
+    let
+        lines =
+            List.map (\{ param, x, y } -> LineTo (Point.fromFloats ( x, y ))) rays
+    in
+        List.concat [ [ BeginPath, FillStyle Color.yellow ], lines, [ Fill ] ]
 
 
 drawRays : Px -> List Intersection -> List DrawOp
@@ -334,10 +329,13 @@ type alias Model =
 update : Msg -> Model -> Model
 update message ( canvas, clickState, mousePos ) =
     let
+        mouse =
+           mousePos 
+
         mouseDot =
             [ BeginPath
             , FillStyle Color.red
-            , Arc mousePos 4 0 (2 * pi)
+            , Arc mouse 4 0 (2 * pi)
             , Fill
             ]
 
@@ -345,7 +343,8 @@ update message ( canvas, clickState, mousePos ) =
             [ ClearRect (Point.fromInts ( 0, 0 )) { width = 640, height = 360 } ]
 
         rays =
-            getIntersections (toPx mousePos)
+            getIntersections (toPx mouse)
+                |> Debug.log "rays"
 
         canvas_ =
             canvas
@@ -354,7 +353,7 @@ update message ( canvas, clickState, mousePos ) =
                         [ clear
                         , drawVisiblePolygon rays
                         , drawWalls
-                        , drawRays (toPx mousePos) rays
+                        , drawRays (toPx mouse) rays
                         , mouseDot
                         ]
                     )
