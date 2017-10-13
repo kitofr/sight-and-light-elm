@@ -278,7 +278,7 @@ drawVisiblePolygon rays =
       h :: t -> 
         let lines = List.map (\{param, x, y} -> LineTo (Point.fromFloats (x, y))) t
         in
-          List.concat [ [BeginPath, FillStyle Color.blue], lines, [Fill]]
+          List.concat [ [BeginPath, FillStyle Color.yellow], lines, [Fill]]
           
       [] -> []
 
@@ -343,9 +343,9 @@ update message ( canvas, clickState, mousePos ) =
                 |> Canvas.batch
                     (List.concat
                         [ clear
+                        , drawVisiblePolygon rays
                         , drawWalls
                         , drawRays (toPx mousePos) rays
-                        , drawVisiblePolygon rays
                         , mouseDot
                         ]
                     )
