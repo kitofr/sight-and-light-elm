@@ -127,7 +127,6 @@ uniquePoints : List Px
 uniquePoints =
     List.concatMap (\ray -> [ ray.a, ray.b ]) segments
         |> unique (\p -> toString ( p.x, p.y ))
-        |> Debug.log "points"
 
 
 angles : Px -> List Px -> List Float
@@ -344,7 +343,6 @@ update message ( canvas, clickState, mousePos ) =
 
         rays =
             getIntersections (toPx mouse)
-                |> Debug.log "rays"
 
         canvas_ =
             canvas
