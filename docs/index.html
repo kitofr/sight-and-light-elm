@@ -9800,28 +9800,25 @@ var _kitofr$sight_and_light_elm$Main$findClosestIntersection = F2(
 			_kitofr$sight_and_light_elm$Main$segments);
 	});
 var _kitofr$sight_and_light_elm$Main$uniquePoints = A2(
-	_elm_lang$core$Debug$log,
-	'points',
+	_kitofr$sight_and_light_elm$Main$unique,
+	function (p) {
+		return _elm_lang$core$Basics$toString(
+			{ctor: '_Tuple2', _0: p.x, _1: p.y});
+	},
 	A2(
-		_kitofr$sight_and_light_elm$Main$unique,
-		function (p) {
-			return _elm_lang$core$Basics$toString(
-				{ctor: '_Tuple2', _0: p.x, _1: p.y});
-		},
-		A2(
-			_elm_lang$core$List$concatMap,
-			function (ray) {
-				return {
+		_elm_lang$core$List$concatMap,
+		function (ray) {
+			return {
+				ctor: '::',
+				_0: ray.a,
+				_1: {
 					ctor: '::',
-					_0: ray.a,
-					_1: {
-						ctor: '::',
-						_0: ray.b,
-						_1: {ctor: '[]'}
-					}
-				};
-			},
-			_kitofr$sight_and_light_elm$Main$segments)));
+					_0: ray.b,
+					_1: {ctor: '[]'}
+				}
+			};
+		},
+		_kitofr$sight_and_light_elm$Main$segments));
 var _kitofr$sight_and_light_elm$Main$getIntersections = function (mousePos) {
 	var uniqueAngles = A2(_kitofr$sight_and_light_elm$Main$angles, mousePos, _kitofr$sight_and_light_elm$Main$uniquePoints);
 	return A2(
@@ -9923,11 +9920,8 @@ var _kitofr$sight_and_light_elm$Main$update = F2(
 				}
 			}
 		};
-		var rays = A2(
-			_elm_lang$core$Debug$log,
-			'rays',
-			_kitofr$sight_and_light_elm$Main$getIntersections(
-				_kitofr$sight_and_light_elm$Main$toPx(mouse)));
+		var rays = _kitofr$sight_and_light_elm$Main$getIntersections(
+			_kitofr$sight_and_light_elm$Main$toPx(mouse));
 		var canvas_ = A2(
 			_kitofr$sight_and_light_elm$Canvas$batch,
 			_elm_lang$core$List$concat(
