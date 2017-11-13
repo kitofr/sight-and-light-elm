@@ -265,7 +265,10 @@ segments =
 
 drawWalls : List DrawOp
 drawWalls =
-    List.concatMap (\{ a, b } -> line (Point.fromFloats ( a.x, a.y )) (Point.fromFloats ( b.x, b.y ))) segments
+    List.concatMap (\{ a, b } -> 
+      line (Point.fromFloats ( a.x, a.y )) 
+           (Point.fromFloats ( b.x, b.y ))
+      ) segments
 
 
 drawDot : Intersection -> List DrawOp
@@ -277,13 +280,13 @@ drawDot { x, y } =
     ]
 
 
-drawVisiblePolygon : List Intersection -> List DrawOp
-drawVisiblePolygon rays =
+drawPolygon : List Intersection -> List DrawOp
+drawPolygon rays =
     let
-        lines =
+        polygon =
             List.map (\{ param, x, y } -> LineTo (Point.fromFloats ( x, y ))) rays
     in
-        List.concat [ [ BeginPath, FillStyle Color.yellow ], lines, [ Fill ] ]
+        List.concat [ [ BeginPath, FillStyle (Color.rgba 0 0 0 0.1)], polygon, [ Fill ] ]
 
 
 drawRays : Px -> List Intersection -> List DrawOp
@@ -349,9 +352,9 @@ update message ( canvas, clickState, mousePos ) =
                 |> Canvas.batch
                     (List.concat
                         [ clear
-                        , drawVisiblePolygon rays
+                        , drawPolygon rays
                         , drawWalls
-                        , drawRays (toPx mouse) rays
+                        --, drawRays (toPx mouse) rays
                         , mouseDot
                         ]
                     )
