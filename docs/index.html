@@ -9473,8 +9473,8 @@ var _kitofr$sight_and_light_elm$Main$handleClickState = function (_p0) {
 			return A3(_kitofr$sight_and_light_elm$Main$drawLine, _p2._0, _p2._1, _p3);
 	}
 };
-var _kitofr$sight_and_light_elm$Main$drawVisiblePolygon = function (rays) {
-	var lines = A2(
+var _kitofr$sight_and_light_elm$Main$drawPolygon = function (rays) {
+	var polygon = A2(
 		_elm_lang$core$List$map,
 		function (_p4) {
 			var _p5 = _p4;
@@ -9491,13 +9491,14 @@ var _kitofr$sight_and_light_elm$Main$drawVisiblePolygon = function (rays) {
 				_0: _kitofr$sight_and_light_elm$Canvas$BeginPath,
 				_1: {
 					ctor: '::',
-					_0: _kitofr$sight_and_light_elm$Canvas$FillStyle(_elm_lang$core$Color$yellow),
+					_0: _kitofr$sight_and_light_elm$Canvas$FillStyle(
+						A4(_elm_lang$core$Color$rgba, 0, 0, 0, 0.1)),
 					_1: {ctor: '[]'}
 				}
 			},
 			_1: {
 				ctor: '::',
-				_0: lines,
+				_0: polygon,
 				_1: {
 					ctor: '::',
 					_0: {
@@ -9930,21 +9931,14 @@ var _kitofr$sight_and_light_elm$Main$update = F2(
 					_0: clear,
 					_1: {
 						ctor: '::',
-						_0: _kitofr$sight_and_light_elm$Main$drawVisiblePolygon(rays),
+						_0: _kitofr$sight_and_light_elm$Main$drawPolygon(rays),
 						_1: {
 							ctor: '::',
 							_0: _kitofr$sight_and_light_elm$Main$drawWalls,
 							_1: {
 								ctor: '::',
-								_0: A2(
-									_kitofr$sight_and_light_elm$Main$drawRays,
-									_kitofr$sight_and_light_elm$Main$toPx(mouse),
-									rays),
-								_1: {
-									ctor: '::',
-									_0: mouseDot,
-									_1: {ctor: '[]'}
-								}
+								_0: mouseDot,
+								_1: {ctor: '[]'}
 							}
 						}
 					}
